@@ -1,0 +1,49 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout repo first (needed for hashFiles & apt-packages.txt)
+    - uses: actions/checkout@v4
+
+    # Install dependencies from apt-packages.txt
+    - name: Install dependencies
+      run: |
+        # Remove man-db to avoid slow trigger updates
+        sudo apt-get remove -y --purge man-db || true
+        sudo apt-get update
+        # Install required dependencies from apt-packages.txt
+        xargs -a apt-packages.txt sudo apt-get install -y --no-install-recommends
+
+    # Cache CMake build directory
+    - name: Cache build
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/build
+        key: ${{ runner.os }}-cmake-${{ env.BUILD_TYPE }}-${{ hashFiles('CMakeLists.txt', 'src/CMakeLists.txt', 'test/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-${{ env.BUILD_TYPE }}-
+
+    # Configure CMake
+    - name: Configure CMake
+      run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+    # Build the project
+    - name: Build
+      run: cmake --build ${{ github.workspace }}/build --parallel $(nproc)
+
+    # Run tests
+    - name: Test
+      working-directory: ${{ github.workspace }}/build
+      run: ctest --output-on-failure --timeout 300 --schedule-random --parallel $(nproc)
