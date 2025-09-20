@@ -44,3 +44,7 @@
 build/
 bin/
 out/
+
+# Visual Studio directory
+.vs/
+.vscode/
