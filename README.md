@@ -1,6 +1,6 @@
 # grabx
 
-[![Build and Test](https://github.com/ItzEnigma/grabx/actions/workflows/cmake-build-test.yml/badge.svg)](https://github.com/ItzEnigma/grabx/actions/workflows/cmake-build-test.yml)
+[![Build and Test](https://github.com/ItzEnigma/grabx/actions/workflows/build-test.yml/badge.svg?branch=master)](https://github.com/ItzEnigma/grabx/actions/workflows/build-test.yml)
 
 GrabX Download Manager
 
