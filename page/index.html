@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GrabX - Download Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: #f9f9f9;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            /* Disable text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .header {
+            background: #2d3748;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+        }
+
+        .download-btn {
+            padding: 14px 28px;
+            font-size: 18px;
+            color: #fff;
+            background: #0078d7;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #005fa3;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: #a0aec0;
+            padding: 1rem 2rem;
+            text-align: center;
+            flex-shrink: 0;
+            border-top: 1px solid #4a5568;
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .footer a {
+            color: #63b3ed;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #90cdf4;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1 style="text-align: center;">GrabX</h1>
+    </header>
+
+    <main class="main-content">
+        <a href="download/build.zip" download>
+            <!-- Please modify the file name if you want to change the downloaded file -->
+            <button class="download-btn">Download File</button>
+        </a>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 GrabX | Open Source Download Manager | <a href="https://github.com/ItzEnigma/grabx"
+                target="_blank">View
+                on GitHub</a></p>
+    </footer>
+</body>
+
+</html>
