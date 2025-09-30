@@ -51,3 +51,4 @@ out/
 
 # Unnecessary files
 page/download/*
+data/*
