@@ -84,7 +84,7 @@ Example:
 - Ensure proper resource management (RAII).
 
 ### 7. Line Length
-- Limit lines to a maximum of **80 characters** for better readability.
+- Limit lines to a maximum of **120 characters** for better readability.
 
 ### 8. Avoid Global Variables
 - Use class members or function parameters instead of global variables.
