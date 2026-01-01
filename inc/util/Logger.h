@@ -1,88 +1,130 @@
 #ifndef _LOGGER_H
 #define _LOGGER_H
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
+#include <memory>
 #include <string>
-#include <fstream>
-#include <mutex>
 
 namespace util
 {
-	class Logger
-	{
-	public:
-		enum class LogDirection
-		{
-			NONE,
-			CONSOLE,
-			FILE,
-			BOTH
-		};
-		/**
-		 * The `info` function in the `Logger` class logs an informational message with the tag "INFO".
-		 *
-		 * @param message The `message` parameter is a constant reference to a `std::string` object, which
-		 * means it is a read-only reference to a string that is passed to the `info` method of the `Logger`
-		 * class.
-		 */
-		static void info(const std::string &message);
+class Logger
+{
+public:
+    enum class LogDirection
+    {
+        NONE,
+        CONSOLE,
+        FILE,
+        BOTH
+    };
 
-		/**
-		 * The error function in the Logger class logs an error message with the tag "ERROR".
-		 *
-		 * @param message The `message` parameter is a constant reference to a `std::string` object, which
-		 * contains the error message that needs to be logged.
-		 */
-		static void error(const std::string &message);
+    /**
+     * Initialize the logger with default settings
+     */
+    static void init();
 
-		/**
-		 * The debug function in the Logger class logs a message with the "DEBUG" level.
-		 *
-		 * @param message The `message` parameter is a constant reference to a `std::string` object, which
-		 * means it is a read-only reference to a string that is passed to the `debug` function.
-		 */
-		static void debug(const std::string &message);
+    /**
+     * The `info` function logs an informational message.
+     */
+    static void info(const std::string& message);
 
-		/**
-		 * The `warn` function in the `Logger` class logs a warning message with the prefix "WARN".
-		 *
-		 * @param message The `message` parameter is a constant reference to a `std::string` object, which
-		 * means it is a read-only reference to a string that is passed to the `warn` function in the `Logger`
-		 * class.
-		 */
-		static void warn(const std::string &message);
+    /**
+     * The `info` function logs an informational message with format arguments.
+     * @example Logger::info("x = {}, y = {}", 20, 50);
+     */
+    template <typename... Args> static void info(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        getLogger()->info(fmt, std::forward<Args>(args)...);
+    }
 
-		/**
-		 * The `Logger::fatal` function logs a message with the severity level "FATAL".
-		 *
-		 * @param message The `message` parameter is a constant reference to a `std::string` object. It is the
-		 * message that will be logged with the severity level "FATAL".
-		 */
-		static void fatal(const std::string &message);
+    /**
+     * The error function logs an error message.
+     */
+    static void error(const std::string& message);
 
-		/**
-		 * The function `setLogDirection` in the Logger class sets the log direction to the specified value.
-		 *
-		 * @param direction The `direction` parameter is of type `LogDirection`, which is a user-defined type
-		 * that likely represents the direction in which logging should occur (e.g., file, console, network).
-		 */
-		static void setLogDirection(const LogDirection &direction);
+    /**
+     * The error function logs an error message with format arguments.
+     * @example Logger::error("Could not open file: {}", filename);
+     */
+    template <typename... Args> static void error(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        getLogger()->error(fmt, std::forward<Args>(args)...);
+    }
 
-		/**
-		 * The `setLogFile` function in the `Logger` class sets the log file path.
-		 * @param filePath The `filePath` parameter is a constant reference to a `std::string` object. It represents
-		 * the path of the log file that you want to set for the logger.
-		 */
-		static void setLogFile(const std::string &filePath);
+    /**
+     * The debug function logs a debug message with file and line information.
+     * @note Use LOG_DEBUG macro for automatic file/line capture.
+     */
+    static void debug(const std::string& message, const char* file = nullptr, int line = 0);
 
-	private:
-		static void log(const std::string &level, const std::string &message);
-		static std::string getCurrentTime();
-		static std::mutex logMutex;
-		static std::ofstream logFile;
-		static bool isFileOpen;
-		static LogDirection logDirection;
-		static std::string logFilePath;
-	};
-}
+    /**
+     * The debug function logs a debug message with format arguments.
+     * @example Logger::debug("Debug values: x = {}, y = {}", 20, 50);
+     */
+    template <typename... Args> static void debug(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        getLogger()->debug(fmt, std::forward<Args>(args)...);
+    }
+
+    /**
+     * The warn function logs a warning message.
+     */
+    static void warn(const std::string& message);
+
+    /**
+     * The warn function logs a warning message with format arguments.
+     * @example Logger::warn("Potential issue at x = {}, y = {}", 20, 50);
+     */
+    template <typename... Args> static void warn(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        getLogger()->warn(fmt, std::forward<Args>(args)...);
+    }
+
+    /**
+     * The fatal function logs a critical/fatal message.
+     */
+    static void fatal(const std::string& message);
+
+    /**
+     * The fatal function logs a critical/fatal message with format arguments.
+     * @example Logger::fatal("Critical error: variable buffer size = {}", size);
+     */
+    template <typename... Args> static void fatal(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        getLogger()->critical(fmt, std::forward<Args>(args)...);
+    }
+
+    /**
+     * Set the log direction (console, file, or both).
+     */
+    static void setLogDirection(const LogDirection& direction);
+
+    /**
+     * Set the log file path.
+     */
+    static void setLogFile(const std::string& filePath);
+
+private:
+    static std::shared_ptr<spdlog::logger> getLogger();
+    static void updateSinks(); // Reconfigure sinks based on current settings
+
+    static std::shared_ptr<spdlog::logger> _logger; // The spdlog logger instance
+    static LogDirection _logDirection;
+    static std::string _logFilePath;
+    static bool _initialized;
+};
+} // namespace util
+
+// Macro for debug logging with file and line information
+#define LOG_DEBUG(message) util::Logger::debug(message, __FILE__, __LINE__)
+
+// Convenience macros for other log levels
+#define LOG_INFO(message) util::Logger::info(message)
+#define LOG_WARN(message) util::Logger::warn(message)
+#define LOG_ERROR(message) util::Logger::error(message)
+#define LOG_FATAL(message) util::Logger::fatal(message)
 
 #endif // _LOGGER_H

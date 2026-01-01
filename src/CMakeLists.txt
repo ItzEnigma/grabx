@@ -1,13 +1,16 @@
-# Get source files
-file(GLOB_RECURSE SRC_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-)
+# Add util library
+add_subdirectory(util)
+
+# Include source files
+include(CMakeSourceLists.txt)
 
 # Create executable
 add_executable(grabx ${SRC_FILES})
+target_link_libraries(grabx PRIVATE util_lib)
 
-# Create library
-add_library(grabx_lib STATIC ${SRC_FILES})
+# # Create library
+# add_library(grabx_lib STATIC ${SRC_FILES})
 
-# Link libraries
-target_link_libraries(grabx_lib PRIVATE ${PROJECT_LIBRARIES})
+# # Link libraries
+# target_link_libraries(grabx PRIVATE spdlog::spdlog)
+# target_link_libraries(grabx_lib PRIVATE ${PROJECT_LIBRARIES} spdlog::spdlog)

@@ -1,0 +1,4 @@
+# Make the source files available to the main CMakeLists.txt
+set(SRC_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+)
