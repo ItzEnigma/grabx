@@ -1,25 +1,35 @@
-# Get test source files
-file(GLOB TEST_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-)
+include_directories(inc)
+set(TEST_EXECUTABLE "test")
+file(GLOB_RECURSE TEST_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
-# Fetch GoogleTest
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
-)
+add_executable(${TEST_EXECUTABLE} ${TEST_FILES})
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+target_link_libraries(${TEST_EXECUTABLE} gtest gmock_main)
+target_compile_definitions(${TEST_EXECUTABLE} PRIVATE UNIT_TESTING)
 
-# Create test executable
-add_executable(grabx_tests ${TEST_FILES})
-
-# Link test executable with GoogleTest and project library
-target_link_libraries(grabx_tests PRIVATE grabx_lib gtest_main gmock_main)
-
-# Enable CTest
 include(GoogleTest)
-gtest_discover_tests(grabx_tests)
+gtest_discover_tests(${TEST_EXECUTABLE})
+
+if(ENABLE_COVERAGE)
+    set(COVERAGE_MAIN "coverage")
+    set(COVERAGE_EXCLUDES
+        "${PROJECT_SOURCE_DIR}/app/*"
+        "${PROJECT_SOURCE_DIR}/cmake/*"
+        "${PROJECT_SOURCE_DIR}/docs/*"
+        "${PROJECT_SOURCE_DIR}/external/*"
+        "${PROJECT_SOURCE_DIR}/test/*"
+        "${PROJECT_SOURCE_DIR}/build/*"
+        "/usr/include/*")
+    set(COVERAGE_EXTRA_FLAGS)
+    set(COVERAGE_DEPENDENCIES test)
+
+    setup_target_for_coverage_gcovr_html(
+        NAME
+        ${COVERAGE_MAIN}
+        EXECUTABLE
+        ${TEST_EXECUTABLE} --gtest_brief=1
+        DEPENDENCIES
+        ${COVERAGE_DEPENDENCIES}
+        BASE_DIRECTORY
+        ${CMAKE_SOURCE_DIR})
+endif()
