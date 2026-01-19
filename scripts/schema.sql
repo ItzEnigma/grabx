@@ -19,11 +19,11 @@ CREATE TABLE IF NOT EXISTS downloads (
         status IN ('pending', 'downloading', 'paused', 'completed', 'failed', 'cancelled')
     ),
     progress REAL DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
-    total_size INTEGER CHECK (total_size >= 0),
-    downloaded_size INTEGER DEFAULT 0 CHECK (downloaded_size >= 0),
-    file_path TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    totalSize INTEGER CHECK (totalSize >= 0),
+    downloadedSize INTEGER DEFAULT 0 CHECK (downloadedSize >= 0),
+    filePath TEXT,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ------------------------------------------------------
@@ -31,17 +31,17 @@ CREATE TABLE IF NOT EXISTS downloads (
 -- ------------------------------------------------------
 CREATE TABLE IF NOT EXISTS segments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    download_id INTEGER NOT NULL,
-    start_byte INTEGER NOT NULL CHECK (start_byte >= 0),
-    end_byte INTEGER NOT NULL CHECK (end_byte >= start_byte),
+    downloadId INTEGER NOT NULL,
+    startByte INTEGER NOT NULL CHECK (startByte >= 0),
+    endByte INTEGER NOT NULL CHECK (endByte >= startByte),
     downloaded INTEGER DEFAULT 0 CHECK (downloaded >= 0),
     percentage REAL DEFAULT 0 CHECK (percentage >= 0 AND percentage <= 100),
     status TEXT NOT NULL CHECK (
         status IN ('pending', 'downloading', 'completed', 'failed')
     ),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (download_id) REFERENCES downloads (id) ON DELETE CASCADE
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (downloadId) REFERENCES downloads (id) ON DELETE CASCADE
 );
 
 -- ------------------------------------------------------
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS segments (
 CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ======================================================
