@@ -1,5 +1,7 @@
 #include <util/Logger.h>
 
+#include "db/model/Download.h"
+
 int main()
 {
     util::Logger::setLogDirection(util::Logger::LogDirection::BOTH);
