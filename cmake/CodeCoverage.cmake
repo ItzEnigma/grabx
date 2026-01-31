@@ -139,8 +139,8 @@ function(setup_target_for_coverage_gcovr_html)
 
     # Running gcovr
     set(GCOVR_EXTRA_FLAGS
-        --json-summary
-        --json-summary-pretty
+        --exclude-throw-branches
+        --exclude-function-lines
         --html-theme
         github.dark-green)
     set(GCOVR_HTML_CMD

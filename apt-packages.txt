@@ -1,3 +1,4 @@
 libboost-json-dev
 clang-tidy
 ccache
+gcovr
