@@ -18,12 +18,15 @@ GrabX Download Manager
 - **Optional:**
   - `TestMate` VScode extension for running tests
   - `doxygen` and `graphviz` for generating documentation
+  - **Linux only:** `gcovr` for generating coverage reports
 
 ---
 
 ### Environment Setup
 
 You can set up the development environment on Windows and Linux or even WSL by following the instructions below.
+
+> ❗ Coverage reports generation is only supported on **Linux**.
 
 #### Windows
 
@@ -51,7 +54,7 @@ This also can be followed for wsl _(Windows Subsystem for Linux)_.
 
    ```bash
    sudo apt update
-   sudo apt install -y build-essential cmake git libboost-json-dev clang-tidy ccache doxygen graphviz ninja-build sqlite3
+   sudo apt install -y build-essential cmake git libboost-json-dev clang-tidy ccache doxygen graphviz gcovr ninja-build sqlite3
    ```
 
 2. **Clone the repository**
@@ -60,8 +63,15 @@ This also can be followed for wsl _(Windows Subsystem for Linux)_.
 
    ```bash
    mkdir build
-   cmake -B build -G "Ninja" ..
+   cmake -B build -G "Ninja" .. # -DENABLE_COVERAGE=ON for coverage reports
    cmake --build build --config Release # or Debug
+   ```
+
+4. **Generate Coverage Reports** _(if enabled during build)_
+
+   ```bash
+   cd build
+   cmake --build . --target coverage
    ```
 
 ---

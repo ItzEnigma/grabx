@@ -38,18 +38,31 @@ jobs:
 
       # Configure CMake
       - name: Configure CMake
-        run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DENABLE_COVERAGE=ON
 
       # Build the project
       - name: Build
         run: cmake --build ${{ github.workspace }}/build --parallel $(nproc)
 
-    # Run tests
-    # - name: Make test executable
-    #   run: |
-    #     chmod +x build/test/test
+      # Run tests
+      - name: Run tests
+        if: success()
+        run: |
+          chmod +x build/test/test
+          cd build
+          ./test/test --gtest_output=xml:test_results.xml --gtest_brief=1
 
-    # - name: Run tests
-    #   run: |
-    #     cd build
-    #     ./test/test --gtest_output=xml:test_results.xml --gtest_brief=1
+      # Generate code coverage report
+      - name: Generate code coverage report
+        if: success()
+        run: |
+          cd build
+          cmake --build . --target coverage
+      # Upload coverage report
+      - name: Upload coverage report
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/coverage
+          retention-days: 7
