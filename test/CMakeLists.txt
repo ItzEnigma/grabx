@@ -4,7 +4,7 @@ file(GLOB_RECURSE TEST_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
 add_executable(${TEST_EXECUTABLE} ${TEST_FILES})
 
-target_link_libraries(${TEST_EXECUTABLE} gtest gmock_main)
+target_link_libraries(${TEST_EXECUTABLE} gtest gmock_main util_lib db_lib)
 target_compile_definitions(${TEST_EXECUTABLE} PRIVATE UNIT_TESTING)
 
 include(GoogleTest)
@@ -18,7 +18,10 @@ if(ENABLE_COVERAGE)
         "${PROJECT_SOURCE_DIR}/docs/*"
         "${PROJECT_SOURCE_DIR}/external/*"
         "${PROJECT_SOURCE_DIR}/test/*"
+        "${PROJECT_SOURCE_DIR}/inc/util/*"
+        "${PROJECT_SOURCE_DIR}/src/util/*"
         "${PROJECT_SOURCE_DIR}/build/*"
+        "${PROJECT_SOURCE_DIR}/build2/*" # Optional second build dir
         "/usr/include/*")
     set(COVERAGE_EXTRA_FLAGS)
     set(COVERAGE_DEPENDENCIES test)

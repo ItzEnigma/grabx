@@ -32,5 +32,17 @@ int main()
 
     LOG_DEBUG("This debug message will also not be logged");
 
+    /** App Logs */
+
+    db::model::Download dl("http://example.com/file.zip",
+                           "pending",
+                           0.0,
+                           std::nullopt,
+                           std::nullopt,
+                           std::nullopt,
+                           "2024-10-01 12:00:00",
+                           "2024-10-01 12:00:00");
+    LOG_DEBUG("Created Download model with URL: " + dl.getUrl());
+
     return 0;
 }
